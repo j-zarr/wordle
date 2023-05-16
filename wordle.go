@@ -109,33 +109,26 @@ func (g *guess) string() string {
 // if the guess is invalid.
 func (w *wordleState) appendGuess(g guess) error {
 
-	w.currGuess ++
+	if w.currGuess >= maxGuesses {
+		return errors.New("maximum number of guesses reached")
 
-	var err error
-
-	if w.currGuess > 5 {
-		err = errors.New("maximum number of guesses reached")
-
-	} else if len(g.string()) != 5 {
-		err = errors.New("invalid guess - guess not correct length (5)")
+	} else if len(g.string()) != wordSize {
+		return errors.New("invalid guess - guess must of length 5")
 		
 	} else {
 		// for _, l := range g {
 			// if l.char < 'A' || l.char > 'Z' {
 			if !words.IsWord(g.string()) {
-				err = errors.New("invalid guess - invalid word")
+				return errors.New("invalid guess - invalid word")
 			}
 			// }
 		//}
 	}
 
-	if err != nil {
-		return err
-	}
 
 	w.guesses[w.currGuess] = g
-
-	return err
+	w.currGuess ++
+	return nil
 }
 
 
